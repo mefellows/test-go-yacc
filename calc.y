@@ -17,6 +17,9 @@ import (
 
 var regs = make([]int, 26)
 var base int
+// This is our little guy to interface with Yacc with,
+// he is better than random embedded functions
+var calcy *Calcy
 
 %}
 
@@ -47,7 +50,8 @@ list	: /* empty */
 
 stat	:    expr
 		{
-			fmt.Printf( "%d\n", $1 );
+			calcy.PrintResult(fmt.Sprintf("%d\n", $1 ));
+
 		}
 	|    LETTER '=' expr
 		{
@@ -123,8 +127,17 @@ func (l *CalcLex) Error(s string) {
 	fmt.Printf("syntax error: %s\n", s)
 }
 
+type Calcy struct{
+
+}
+
+func (c *Calcy) PrintResult(do string) {
+  fmt.Printf("Doing something: %s", do)	
+}
+
 func main() {
 	fi := bufio.NewReader(os.NewFile(0, "stdin"))
+	calcy = &Calcy{}
 
 	for {
 		var eqn string
