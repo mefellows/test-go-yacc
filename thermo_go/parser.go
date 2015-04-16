@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type Program struct {
@@ -19,31 +20,10 @@ func (p *Program) append(s Statement) {
 	p.statements = append(p.statements, s)
 }
 
-type Token int
-
-const (
-	NULL Token = iota
-	INTEGER
-	FLOAT
-	ASSIGNMENT
-	IDENTIFIER
-
-	//	WORD
-	//	STATE
-	HEATER
-	TARGET
-	TEMP
-)
-
 type Statement struct {
-	Name  Token
-	Value string
-}
-
-type Parser struct{}
-
-func (p *Parser) Parse(input string) {
-	fmt.Printf("Parsing input: %s", input)
+	Name     int
+	Value    string
+	IntValue int
 }
 
 type ThermoLex struct {
@@ -58,12 +38,11 @@ func (l *ThermoLex) Lex(lval *ThermoSymType) int {
 	// Each time Lex is invoked, we just need to pop the last statement from the array
 	// set the value and return the token
 	if len(l.program.statements) > l.location && len(l.program.statements) > 0 {
-		//	fmt.Printf("Nr statements:  %d", len(l.program.statements))
-		//	fmt.Printf("Got statement: %v, at location: %d", l.program.statements[l.location], l.location)
 		statement := l.program.statements[l.location]
 		lval.str = statement.Value
+		lval.number, _ = strconv.Atoi(statement.Value)
 		l.location = l.location + 1
-		return int(statement.Name)
+		return statement.Name
 	}
 
 	lval.str = ""
@@ -73,13 +52,6 @@ func (l *ThermoLex) Lex(lval *ThermoSymType) int {
 
 func (l *ThermoLex) Error(s string) {
 	fmt.Printf("syntax error: %s\n", s)
-}
-
-type Thermoy struct {
-}
-
-func (c *Thermoy) PrintResult(do string) {
-	fmt.Printf("Doing something: %s", do)
 }
 
 func main() {
