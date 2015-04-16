@@ -7,9 +7,10 @@
   integer     = ('+'|'-')?[0-9]+ >print;
   float       = ('+'|'-')?[0-9]+'.'[0-9]+;
   assignment  = '=';
-  heater	  = ("heater"|"heat");
+  heater	  = ("heater");
+  heat	      = ("heat");
   state       = ("on"|"off");     
-  target      = "target";
+  target      = ("target"|"set");
   temperature = "temperature";
   newline     = '\n';
   whitespace  = [\t]+;
@@ -18,32 +19,29 @@
   gosh := |*
     
     target => { 
-      emit(TARGET, data, program, ts, te) 
+      emit(TOKTARGET, data, program, ts, te) 
     };
     
     state=> { 
       emit(STATE, data, program, ts, te) 
     };
     
-    heater => { 
+    heat => { 
 	  fmt.Printf("Heat!")
-      emit(HEATER, data, program, ts, te) 
+      emit(TOKHEAT, data, program, ts, te) 
+    };
+    
+    heater => { 
+	  fmt.Printf("Heater!")
+      emit(TOKHEATER, data, program, ts, te) 
     };
     
     temperature => { 
-      emit(TEMP, data, program, ts, te) 
+      emit(TOKTEMPERATURE, data, program, ts, te) 
     };
 
     integer => { 
-      emit(INTEGER, data, program, ts, te) 
-    };
-    
-    float => { 
-      emit(FLOAT, data, program, ts, te) 
-    };
-    
-    assignment => { 
-      emit(ASSIGNMENT, data, program, ts, te) 
+      emit(NUMBER, data, program, ts, te) 
     };
     
     word => { 
@@ -75,7 +73,7 @@ func reset() {
   cs, p, pe, ts, te, act, eof, mark = 0,0,0,0,0,0,0,0
 }
 
-func Run_machine(input string) *Program {
+func run_machine(input string) *Program {
   program = NewProgram()
   reset()
   data := []byte(input)

@@ -1,10 +1,11 @@
 #!/bin/bash -e
 
 ragel -Z lexer_go.rl 
-go build -o hg .
-./hg
-ragel -V lexer_go.rl > hwg.dot
+go generate parser.go
+go build -o thermo .
+./thermo
+ragel -V lexer_go.rl > graph.dot
 if [ $(which dot) -a "$1" != "" ]; then
-  dot -Tpng hwg.dot > hwg.png
-open hwg.png
+  dot -Tpng graph.dot > graph.png
+  open graph.png
 fi

@@ -15,7 +15,7 @@ func yywrap() int {
 var heater = "default"
 %}
 
-%token TOKHEATER TOKHEAT TOKTARGET TOKTEMPERATURE
+//%token TOKHEATER TOKHEAT TOKTARGET TOKTEMPERATURE
 
 // Will be ${PREFIX}SymType
 %union 
@@ -27,10 +27,8 @@ var heater = "default"
 // any non-terminal which returns a value needs a type, which is
 // really a field name in the above union struct
 %type <str> heat_switch 
-
-%token <str> STATE
-%token <number> NUMBER
-%token <str> WORD
+%token <number> NUMBER TOKTEMPERATURE 
+%token <str> WORD TOKHEAT TOKHEATER TOKTARGET STATE
 
 %%
 
@@ -45,12 +43,12 @@ command:
 heat_switch:
 	TOKHEAT STATE 
 	{
-		//if $2 {
-			fmt.Printf("\tHeater '%s' turned on\n", heater)
-			$$ = $2
-		//} else
-		//	fmt.Printf("\tHeat '%s' turned off\n", heater)
-        //}
+		if $2 == "on" {
+			fmt.Printf("\tHeater '%s' turned on\n", heater);
+			$$ = $2;
+		} else {
+			fmt.Printf("\tHeat '%s' turned off\n", heater)
+        }
 	}
 	;
 

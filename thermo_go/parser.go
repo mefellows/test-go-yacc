@@ -47,17 +47,27 @@ func (p *Parser) Parse(input string) {
 }
 
 type ThermoLex struct {
-	s    string
-	done bool
+	s        string
+	done     bool
+	program  *Program
+	location int
 }
 
 func (l *ThermoLex) Lex(lval *ThermoSymType) int {
-	//lval.str = []byte("hello")
-	if !l.done {
-		lval.str = l.s
-		l.done = true
-		return int(WORD)
+	// Ragel has digested the entire input string.
+	// Each time Lex is invoked, we just need to pop the last statement from the array
+	// set the value and return the token
+	if len(l.program.statements) > l.location && len(l.program.statements) > 0 {
+		//	fmt.Printf("Nr statements:  %d", len(l.program.statements))
+		//	fmt.Printf("Got statement: %v, at location: %d", l.program.statements[l.location], l.location)
+		statement := l.program.statements[l.location]
+		lval.str = statement.Value
+		l.location = l.location + 1
+		return int(statement.Name)
 	}
+
+	lval.str = ""
+	l.location = 0
 	return 0
 }
 
@@ -79,9 +89,10 @@ func main() {
 		var eqn string
 		var ok bool
 
-		fmt.Printf("equation: ")
+		fmt.Printf("> ")
 		if eqn, ok = readline(fi); ok {
-			ThermoParse(&ThermoLex{s: eqn})
+			program = run_machine(eqn)
+			ThermoParse(&ThermoLex{program: program})
 		} else {
 			break
 		}
