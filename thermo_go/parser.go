@@ -21,9 +21,8 @@ func (p *Program) append(s Statement) {
 }
 
 type Statement struct {
-	Name     int
-	Value    string
-	IntValue int
+	Name  int
+	Value string
 }
 
 type ThermoLex struct {
