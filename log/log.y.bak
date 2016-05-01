@@ -1,0 +1,81 @@
+%{
+#include <stdio.h>
+#include <string.h>
+#define YYSTYPE char *
+#define YYDEBUG 1
+ 
+void yyerror(const char *str)
+{
+        fprintf(stderr,"error: %s\n",str);
+}
+ 
+int yywrap()
+{
+        return 1;
+} 
+  
+main()
+{
+        yyparse();
+} 
+
+%}
+
+%token SEMICOLON ZONETOK FILETOK WORD FILENAME QUOTE OBRACE EBRACE
+
+%%
+
+commands:
+        |        
+        commands command SEMICOLON
+        ;
+
+
+command:
+        zone_set 
+        ;
+
+zone_set:
+        ZONETOK quotedname zonecontent
+        {
+                printf("Complete zone for '%s' found\n",$2);
+        }
+        ;
+
+zonecontent:
+        OBRACE zonestatements EBRACE 
+        {
+                printf("Zone content for {'%s'}} found\n",$2);
+        }
+		;
+
+quotedname:
+        QUOTE FILENAME QUOTE
+        {
+                $$=$2;
+				printf("Quoted name '%s' found\n", $2);
+        }
+		;
+
+zonestatements:
+        |
+        zonestatements zonestatement SEMICOLON
+        ;
+
+zonestatement:
+        statements
+        |
+        FILETOK FILENAME
+        ;
+
+block: 
+        OBRACE zonestatements EBRACE SEMICOLON
+        ;
+
+statements:
+        | statements statement
+        ;
+
+statement: WORD | block | quotedname
+		;
+%%

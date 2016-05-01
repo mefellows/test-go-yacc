@@ -13,29 +13,13 @@
   target      = ("target"|"set");
   temperature = "temperature";
   newline     = '\n';
+  special     = ("$$");
   whitespace  = [\t]+;
   word        = [a-zA-Z][a-zA-Z_]+; 
   
   gosh := |*
-    
-    target => { 
-      emit(TOKTARGET, data, program, ts, te) 
-    };
-    
-    state=> { 
-      emit(STATE, data, program, ts, te) 
-    };
-    
-    heat => { 
-      emit(TOKHEAT, data, program, ts, te) 
-    };
-    
-    heater => { 
-      emit(TOKHEATER, data, program, ts, te) 
-    };
-    
-    temperature => { 
-      emit(TOKTEMPERATURE, data, program, ts, te) 
+    special => { 
+      emit(SPECIAL, data, program, ts, te) 
     };
 
     integer => { 

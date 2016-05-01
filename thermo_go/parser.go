@@ -50,7 +50,7 @@ func (l *ThermoLex) Lex(lval *ThermoSymType) int {
 }
 
 func (l *ThermoLex) Error(s string) {
-	fmt.Printf("syntax error: %s\n", s)
+	fmt.Printf("syntax error: %s, passing command through to PoSH\n", s)
 }
 
 func main() {

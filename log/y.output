@@ -1,0 +1,106 @@
+
+state 0
+	$accept: .commands $end 
+	commands: .    (1)
+
+	.  reduce 1 (src line 37)
+
+	commands  goto 1
+
+state 1
+	$accept:  commands.$end 
+	commands:  commands.command 
+
+	$end  accept
+	TOKHEATER  shift 8
+	TOKHEAT  shift 6
+	TOKTARGET  shift 7
+	.  error
+
+	command  goto 2
+	heat_switch  goto 3
+	target_set  goto 4
+	heater_select  goto 5
+
+state 2
+	commands:  commands command.    (2)
+
+	.  reduce 2 (src line 38)
+
+
+state 3
+	command:  heat_switch.    (3)
+
+	.  reduce 3 (src line 42)
+
+
+state 4
+	command:  target_set.    (4)
+
+	.  reduce 4 (src line 43)
+
+
+state 5
+	command:  heater_select.    (5)
+
+	.  reduce 5 (src line 43)
+
+
+state 6
+	heat_switch:  TOKHEAT.STATE 
+
+	STATE  shift 9
+	.  error
+
+
+state 7
+	target_set:  TOKTARGET.TOKTEMPERATURE NUMBER 
+
+	TOKTEMPERATURE  shift 10
+	.  error
+
+
+state 8
+	heater_select:  TOKHEATER.WORD 
+
+	WORD  shift 11
+	.  error
+
+
+state 9
+	heat_switch:  TOKHEAT STATE.    (6)
+
+	.  reduce 6 (src line 45)
+
+
+state 10
+	target_set:  TOKTARGET TOKTEMPERATURE.NUMBER 
+
+	NUMBER  shift 12
+	.  error
+
+
+state 11
+	heater_select:  TOKHEATER WORD.    (8)
+
+	.  reduce 8 (src line 63)
+
+
+state 12
+	target_set:  TOKTARGET TOKTEMPERATURE NUMBER.    (7)
+
+	.  reduce 7 (src line 56)
+
+
+10 terminals, 6 nonterminals
+9 grammar rules, 13/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+55 working sets used
+memory: parser 4/30000
+0 extra closures
+7 shift entries, 1 exceptions
+5 goto entries
+0 entries saved by goto default
+Optimizer space used: output 12/30000
+12 table entries, 0 zero
+maximum spread: 10, maximum offset: 10

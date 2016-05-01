@@ -1,0 +1,58 @@
+%{
+#include <stdio.h>
+#include <string.h>
+ 
+void yyerror(const char *str)
+{
+        fprintf(stderr,"error: %s\n",str);
+}
+ 
+int yywrap()
+{
+        return 1;
+} 
+  
+int main()
+{
+        yyparse();
+} 
+
+%}
+
+%token SEMICOLON ZONETOK FILETOK WORD FILENAME QUOTE OBRACE EBRACE
+
+
+%union 
+{
+        //int number;
+        char *str;
+}
+
+%type <str> quotedname;
+%type <str> statements;
+%type <str> statement;
+
+%%
+
+
+quotedname:
+        QUOTE FILENAME QUOTE
+        {
+                //$$=$2;
+				$$=yylval.str;
+				printf("Quoted name '%s' found\n", $$);
+				//printf("Quoted name found\n");
+        }
+		;
+
+statements:
+        | statements statement
+        ;
+
+statement: WORD | quotedname
+        {
+                $$=$1;
+				printf("word/quotedname '%s' found\n", $1);
+        }
+		;
+%%

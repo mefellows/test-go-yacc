@@ -5,7 +5,7 @@ import (
 )
 
 func yyerror(str []byte) {
-	fmt.Errorf("error: %s\n",str)
+	fmt.Errorf("error: %s, passing through as is\n",str)
 }
 
 func yywrap() int {
@@ -28,7 +28,7 @@ var heater = "default"
 // really a field name in the above union struct
 %type <str> heat_switch 
 %token <number> NUMBER TOKTEMPERATURE 
-%token <str> WORD TOKHEAT TOKHEATER TOKTARGET STATE
+%token <str> WORD TOKHEAT TOKHEATER TOKTARGET STATE SPECIAL
 
 %%
 
@@ -36,9 +36,19 @@ commands:
 	| commands command
 	;
 
-
 command:
-	heat_switch | target_set | heater_select
+	other_special_command | special_command	
+    {
+		fmt.Printf("Running a command\n")
+    }
+
+other_special_command:
+	heat_switch | target_set
+    ;
+
+special_command:
+	heater_select | specific_command
+    ;
 
 heat_switch:
 	TOKHEAT STATE 
@@ -67,9 +77,9 @@ heater_select:
 	}
 	;
 
-heater_select:
-	WORD
+specific_command:
+	SPECIAL WORD
 	{
-		fmt.Printf("\tword: '%s'\n",$1)
+		fmt.Printf("\tspecial word: '%s'\n",$1)
 	}
 	;

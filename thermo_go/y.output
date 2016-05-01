@@ -1,0 +1,141 @@
+
+state 0
+	$accept: .commands $end 
+	commands: .    (1)
+
+	.  reduce 1 (src line 35)
+
+	commands  goto 1
+
+state 1
+	$accept:  commands.$end 
+	commands:  commands.command 
+
+	$end  accept
+	TOKHEAT  shift 9
+	TOKHEATER  shift 11
+	TOKTARGET  shift 10
+	SPECIAL  shift 12
+	.  error
+
+	heat_switch  goto 5
+	command  goto 2
+	other_special_command  goto 3
+	special_command  goto 4
+	target_set  goto 6
+	heater_select  goto 7
+	specific_command  goto 8
+
+state 2
+	commands:  commands command.    (2)
+
+	.  reduce 2 (src line 36)
+
+
+state 3
+	command:  other_special_command.    (3)
+
+	.  reduce 3 (src line 39)
+
+
+state 4
+	command:  special_command.    (4)
+
+	.  reduce 4 (src line 40)
+
+
+state 5
+	other_special_command:  heat_switch.    (5)
+
+	.  reduce 5 (src line 45)
+
+
+state 6
+	other_special_command:  target_set.    (6)
+
+	.  reduce 6 (src line 46)
+
+
+state 7
+	special_command:  heater_select.    (7)
+
+	.  reduce 7 (src line 49)
+
+
+state 8
+	special_command:  specific_command.    (8)
+
+	.  reduce 8 (src line 50)
+
+
+state 9
+	heat_switch:  TOKHEAT.STATE 
+
+	STATE  shift 13
+	.  error
+
+
+state 10
+	target_set:  TOKTARGET.TOKTEMPERATURE NUMBER 
+
+	TOKTEMPERATURE  shift 14
+	.  error
+
+
+state 11
+	heater_select:  TOKHEATER.WORD 
+
+	WORD  shift 15
+	.  error
+
+
+state 12
+	specific_command:  SPECIAL.WORD 
+
+	WORD  shift 16
+	.  error
+
+
+state 13
+	heat_switch:  TOKHEAT STATE.    (9)
+
+	.  reduce 9 (src line 53)
+
+
+state 14
+	target_set:  TOKTARGET TOKTEMPERATURE.NUMBER 
+
+	NUMBER  shift 17
+	.  error
+
+
+state 15
+	heater_select:  TOKHEATER WORD.    (11)
+
+	.  reduce 11 (src line 72)
+
+
+state 16
+	specific_command:  SPECIAL WORD.    (12)
+
+	.  reduce 12 (src line 80)
+
+
+state 17
+	target_set:  TOKTARGET TOKTEMPERATURE NUMBER.    (10)
+
+	.  reduce 10 (src line 65)
+
+
+11 terminals, 9 nonterminals
+13 grammar rules, 18/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+58 working sets used
+memory: parser 8/30000
+0 extra closures
+9 shift entries, 1 exceptions
+8 goto entries
+0 entries saved by goto default
+Optimizer space used: output 17/30000
+17 table entries, 0 zero
+maximum spread: 11, maximum offset: 10
